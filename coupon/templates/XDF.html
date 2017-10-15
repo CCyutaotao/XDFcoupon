@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+{% load static %}
+<head>
+
+	<meta charset="utf-8">
+	<title>成都新东方优惠批件审核平台</title>
+		<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+ 		<link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome.min.css'%}">
+ 		<link rel="stylesheet" href="{% static 'css/reveal.css' %}">	
+		<script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+		<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+ 	<style type="text/css">
+    body { 
+    	background: url({% static 'img/test.jpg' %}) no-repeat;background-size: cover;font-size: 16px;
+    	padding-top: 70px; }
+
+    .jumbotron {
+      color: #2c3e50;
+      background: rgba(0,0,0,0.15);
+    }
+
+    .navbar-inverse {
+      background: #36648B;
+      color: white;
+    }
+    .navbar-inverse .navbar-brand, .navbar-inverse a{
+      color:white;
+    }
+    .navbar-inverse .navbar-nav>li>a {
+      color: white;
+    } 
+
+	.form{background: rgb(255,255,255);width:400px;margin:100px auto;}
+
+	.fa{display: inline-block;top: 27px;left: 6px;position: relative;color: #ccc;}
+
+	.table{background-color:rgba(255,255,255,0.8);}
+
+	.big-link { display:block; }
+	.modal {
+		width: 40%;
+		margin: 10% auto;
+	}
+	.p-show-modal:hover {
+		cursor: pointer;
+		text-decoration: underline;
+	}
+</style>
+
+</head>
+
+<body>
+<!-- Bar Menu-->
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+
+			<!-- 下拉菜单按钮 -->
+				 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-nav-demo" aria-expanded="false">
+			        <span class="sr-only">切换键</span>
+			        <span class="icon-bar"></span>
+			        <span class="icon-bar"></span>
+			        <span class="icon-bar"></span>
+			      </button>
+
+				 	
+				<a href="#" class="navbar-brand"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> 成都新东方</a>
+			</div>
+			<div class="collapse navbar-collapse" id="bs-nav-demo">
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="#">{{ request.user }}</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+<!-- jumbotron -->
+	<div class="container">
+		<div class="jumbotron">
+		
+			<img src="{% static 'img/xdf.png' %}">
+		    <p> 优惠批件审核平台</p> 
+		  </div>
+		  <!-- Table -->
+			  <table class="table table-bordered table-condensed">
+			  	<thead>
+				  		<tr>
+				  			<th>批件优惠名称</th>
+				  			<th>批件内容</th>
+				  			<th>开始时间</th>
+				  			<th>结束时间</th>
+				  			<th>部门</th>
+				  			<th>审批</th>
+				  		</tr>
+			  	</thead>
+			  	<tbody>
+			  		{% for query in queryset %}
+
+			  		<tr>
+			  			<td>{{ query.couponname }}</td>
+			  			<td>	
+						<p data-toggle="modal" data-target="#Modal{{query.id}}" class="p-show-modal">{{query.content | slice:":30"}}...</p>
+							<div class="modal fade" id="Modal{{query.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+									<div class="modal-content">
+										<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X
+											</button>
+										</div>
+
+										<div class="modal-body">
+											<h3>
+												{{query.content}}
+											</h3>
+										</div>
+									</div>
+							</div>
+						</td>
+						<td>{{ query.starttime | date:"F j, Y"}}</td>
+			  			<td>{{ query.endtime | date:"F j, Y" }}</td>
+			  			<td>{{ query.recorderid }}</td>
+			  			<td>
+			  			<div>
+			  				<form action="/webcouponlist/" method="POST">
+                               					{% csrf_token %}
+                               					<input name="submitid" value={{ query.id }} hidden>
+                               					<button type="submit" class="btn btn-info">提交</button>                                 
+			  				</form>
+
+			  			</div>
+			  			</td>
+	  				</tr>
+	  				{% endfor %}		
+	  			</tbody>
+	  		</table>
+	</body>
+</html>
+
